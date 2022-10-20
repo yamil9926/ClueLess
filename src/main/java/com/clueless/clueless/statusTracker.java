@@ -1,4 +1,4 @@
-package com.clueless_game.clueless;
+package com.clueless.clueless;
 
 import java.util.ArrayList;
 import java.util.Map;
