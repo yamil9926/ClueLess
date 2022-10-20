@@ -1,30 +1,29 @@
-package com.clueless_game.clueless;
+package com.clueless.clueless;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class room extends location {
+    ArrayList<player> occupants = new ArrayList<player>(); //rooms dont have player limits
+    location[] adjLocations = new location[3]; //rooms can have 3 adjacent hallways or 2 hallways and 1 room(corners)
 
     public room(String name, String codename) {
         // constructor
         super(name, codename);
     }
 
-    // for setting adjacent rooms
-    public void getMoveOptions(location op1, location op2, location op3) {
-        // list with options to loop through
-        List<location> options = new ArrayList<location>();
-        options.add(op1);
-        options.add(op2);
-        options.add(op3);
-
-        // initialize all adj_rooms to null
-        for (int i = 0; i < 4; i++) {
-            adj_rooms[i] = null;
-        }
-        // loop through options
-        for (int j = 0; j <= options.size(); j++) {
-            adj_rooms[j] = options.get(j);
-        }
+    public void setAdjacent(location[] locations){ //sets adjacent locations
+        adjLocations = locations;
     }
+
+   public location[] getAdjacent(){
+        return adjLocations;
+   }
+
+   public Boolean addOccupant(player occupant){ //True if succesfull, false if fail
+        return occupants.add(occupant);
+   }
+
+   public Boolean removeOccupant(player occupant){ //True if removed, false if occupant not in list
+        return occupants.remove(occupant);
+   }
 }
