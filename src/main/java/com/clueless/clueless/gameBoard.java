@@ -303,7 +303,7 @@ public class gameBoard {
 			System.out.println(statusMessage);
 			System.out.println();
 			this.endTurn();
-		}//end if
+		}
 		else {
 			player.hasTurn = true;
 			player.moved = false;
@@ -318,9 +318,7 @@ public class gameBoard {
 	}
 
 	public void endGame() {
-		String statusMessage = "";
-		
-		statusMessage = "***GAME OVER***";
+		String statusMessage = "***GAME OVER***";
 		
 		status.add(statusMessage);
 		System.out.println(statusMessage);
@@ -357,7 +355,7 @@ public class gameBoard {
 				two = options[1];
 				outputOptions.add(two.name);
 				System.out.print(", 2 = " + two.name);
-			}//end if
+			}
 			
 			
 			if (options[2] != null){
@@ -365,13 +363,13 @@ public class gameBoard {
 				System.out.print(", 3 = " + three.name);
 				
 				outputOptions.add(three.name);
-			}//end if
+			}
 			if (options[3] != null){
 				four = options[3];
 				System.out.print(", 4 = " + four.name);
 				
 				outputOptions.add(four.name);
-			}//end if
+			}
 			
 			System.out.println();	
 			
@@ -398,15 +396,6 @@ public class gameBoard {
 				throw new Exception(errorMessage);
 			}
 			else {
-				study.setAdjacent(new location[]{hallway1, hallway3, kitchen});
-				hall.setAdjacent(new location[]{hallway1, hallway2, hallway4});
-				lounge.setAdjacent(new location[]{hallway2, hallway5, conservatory});
-				library.setAdjacent(new location[]{hallway3, hallway6, hallway8});
-				billiardRoom.setAdjacent(new location[]{hallway4, hallway6, hallway7, hallway9});
-				diningRoom.setAdjacent(new location[]{hallway5, hallway7, hallway10});
-				conservatory.setAdjacent(new location[]{hallway8, hallway11, lounge});
-				ballroom.setAdjacent(new location[]{hallway11, hallway9, hallway12});
-				kitchen.setAdjacent(new location[]{hallway12, hallway10, study});
 				
 				System.out.println("Can Move to:");
 				System.out.println();
@@ -617,7 +606,7 @@ public class gameBoard {
 				
 				
 				location place = player.getLocation();
-				card playerR = studyCard;//placeholder
+				card playerR;
 
 				if (place == study)
 					playerR = studyCard;
@@ -644,7 +633,7 @@ public class gameBoard {
 					System.out.println();
 					
 					throw new Exception(errorMessage);
-				}//end else
+				}
 				
 				if(inRoom()){
 					player.makeSuggestion(playerS, playerW, playerR);
@@ -670,7 +659,7 @@ public class gameBoard {
 						System.out.println(statusMessage);
 						moveHistory.add(statusMessage);
 						
-					}//end if
+					}
 					else if (suggestPlayer == 2){
 						fromHere = player2.getLocation();
 						fromHere.removeOccupant(player2);
@@ -682,7 +671,7 @@ public class gameBoard {
 						System.out.println(statusMessage);
 						moveHistory.add(statusMessage);
 						
-					}//end if
+					}
 					else if (suggestPlayer == 3){
 						fromHere = player3.getLocation();
 						fromHere.removeOccupant(player3);
@@ -694,7 +683,7 @@ public class gameBoard {
 						System.out.println(statusMessage);
 						moveHistory.add(statusMessage);
 						
-					}//end if
+					}
 					else if ((suggestPlayer == 4) && (player4.name != "Placeholder")){
 						fromHere = player4.getLocation();
 						fromHere.removeOccupant(player4);
@@ -706,7 +695,7 @@ public class gameBoard {
 						System.out.println(statusMessage);
 						moveHistory.add(statusMessage);
 						
-					}//end if
+					}
 					else if ((suggestPlayer == 5) && (player5.name != "Placeholder")){
 						fromHere = player5.getLocation();
 						fromHere.removeOccupant(player5);
@@ -718,7 +707,7 @@ public class gameBoard {
 						System.out.println(statusMessage);
 						moveHistory.add(statusMessage);
 						
-					}//end if
+					}
 					else if ((suggestPlayer == 6) && (player6.name != "Placeholder")){
 						fromHere = player6.getLocation();
 						fromHere.removeOccupant(player6);
@@ -730,7 +719,7 @@ public class gameBoard {
 						System.out.println(statusMessage);
 						moveHistory.add(statusMessage);
 						
-					} // end if					
+					} 				
 					
 					for (player p : playerList) {
 						card[] c = p.proveOrDisproveSuggestion(player.suggestion);
@@ -755,9 +744,9 @@ public class gameBoard {
 					System.out.println(statusMessage);
 					System.out.println();
 
-				}//end else
-			}//end if
-		}//end if
+				}
+			}
+		}
 	}	
 
 	public boolean accuse(int suggestPlayer, int suggestWeapon, int place) throws Exception {
@@ -846,7 +835,7 @@ public class gameBoard {
 			endGame();
 			
 			return true;
-		}//end if
+		}
 		
 		return false;
 	}
