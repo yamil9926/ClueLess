@@ -16,7 +16,7 @@ public class hallway extends location{
         return adjLocations;
    }
 
-   public Boolean addOccupant(player occupant){ //True if succesfull, false if fail
+   public Boolean setOccupant(player occupant){ //True if succesfull, false if fail
         if (occupants != null){
             occupants = occupant;
             return true;

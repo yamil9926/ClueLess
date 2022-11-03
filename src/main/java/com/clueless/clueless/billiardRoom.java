@@ -19,7 +19,7 @@ public class billiardRoom extends location {
         return adjLocations;
    }
 
-   public Boolean addOccupant(player occupant){ //True if succesfull, false if fail
+   public Boolean setOccupant(player occupant){ //True if succesfull, false if fail
         return occupants.add(occupant);
    }
 

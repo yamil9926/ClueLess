@@ -19,5 +19,13 @@ public class location {
     public boolean isOccupied() {
         return location_occupied;
     }
+
+    public Boolean setOccupant(player player){
+        return false;
+    }
+
+    public Boolean removeOccupant(player player){
+        return false;
+    }
   
 }

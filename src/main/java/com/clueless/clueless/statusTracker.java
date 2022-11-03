@@ -104,7 +104,7 @@ public class statusTracker {
 	}
 
 	public void setPlayerLocations(Map<String, String> locations) {
-		this.playerLocations = playerLocations;
+		this.playerLocations = locations;
 	}
 
 	public boolean getEndGame() {
