@@ -110,19 +110,5 @@ public class player {
             System.out.println(name + " cannot disprove the suggestion");
         return matches;
     }
-    
-    public card[] proveOrDisproveAccusation(card[] attemptedAccusation) {
-        card[] matches = new card[3];
-        for (int i = 0; i < attemptedAccusation.length; i++) {
-            for (int n = 0; n < cards.size(); n++) {
-                if (attemptedAccusation[i] == cards.get(n)) {
-                    matches[i] = attemptedAccusation[i];
-                }
-            }
-        }
-        if ((matches[0] == null) && (matches[1] == null) && (matches[2] == null))
-            System.out.println(name + " cannot disprove the accusation");
-        return matches;
-    }
 
 }

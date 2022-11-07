@@ -269,7 +269,7 @@ public class gameBoard {
 		return null;
 	}
 
-	public void endTurn() {
+	public void  endTurn() {
 		player player = getCurrentPlayer();
 		String statusMessage = "";
 		
@@ -721,7 +721,7 @@ public class gameBoard {
 						
 					} 				
 					
-					for (player p : playerList) {
+					for (player p : playerList) { // verify ignoring og player
 						card[] c = p.proveOrDisproveSuggestion(player.suggestion);
 						for (int i = 0; i < 3; i++) {
 							if (c[i] != null) {
@@ -749,7 +749,7 @@ public class gameBoard {
 		}
 	}	
 
-	public boolean accuse(int suggestPlayer, int suggestWeapon, int place) throws Exception {
+	public boolean accuse(int suggestPlayer, int suggestWeapon, int place) throws Exception { //only open case file
 		player player = getCurrentPlayer();
 		String statusMessage = "";
 		
@@ -791,50 +791,40 @@ public class gameBoard {
 			status.add(statusMessage);
 			System.out.println(statusMessage);
 			System.out.println();
-			
-			for (player p : playerList) {
-				card[] c = p.proveOrDisproveAccusation(player.accusation);
-				for (int i = 0; i < 3; i++) {
-					if (c[i] != null) {
-						statusMessage = "Accusation disproved by " + p.name + "'s " + c[i].name + " card";
-						
-						status.add(statusMessage);
-						System.out.println(statusMessage);
-						System.out.println();
-						
-						player.disable();
-						activePlayers--;
-						endTurn();
-						
-						return false;
-					}
-				}
-			}
-			
-			statusMessage = "No player was able to disprove your accusation";
-			
-			status.add(statusMessage);
-			System.out.println(statusMessage);
-			System.out.println();
 
-			active = false;
-			card[] finale = CaseFile.reveal();		
-			statusMessage = finale[0].name + " committed the murder " + " with the " + finale[1].name + " in the " + finale[2].name;
+			card[] finale = CaseFile.reveal();
+			if(player.accusation[0] == finale[0] && player.accusation[1] == finale[1] && player.accusation[2] == finale[2]){
+				statusMessage = finale[0].name + " committed the murder " + " with the " + finale[1].name + " in the " + finale[2].name;
 			
-			status.add(statusMessage);
-			System.out.println(statusMessage);
-			System.out.println();
+				status.add(statusMessage);
+				System.out.println(statusMessage);
+				System.out.println();
+				
+				statusMessage = "*** " + player.name + " wins! ***";
+				
+				status.add(statusMessage);
+				System.out.println(statusMessage);
+				System.out.println();
+				
+				winner = player;
+				endGame();
+				
+				return true;
+
+			}else{
+				statusMessage = "Accusation was not correct, " + player.name + " has been eliminated.";
+						
+				status.add(statusMessage);
+				System.out.println(statusMessage);
+				System.out.println();
+				
+				player.disable();
+				activePlayers--;
+				endTurn();
+				
+				return false;
+			}		
 			
-			statusMessage = "*** " + player.name + " wins! ***";
-			
-			status.add(statusMessage);
-			System.out.println(statusMessage);
-			System.out.println();
-			
-			winner = player;
-			endGame();
-			
-			return true;
 		}
 		
 		return false;
