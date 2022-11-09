@@ -12,6 +12,7 @@ public class player {
     boolean hasTurn;
     boolean suggestionMadeHere;
     private boolean Admin = false;
+    String id;
 
     card[] suggestion = new card[3];
 	card[] accusation = new card[3];
@@ -71,6 +72,18 @@ public class player {
 
     public void disable(){
         disabled = true;
+    }
+
+    public String getId(){
+        return id;
+    }
+
+    public void setId(String id){
+        this.id = id;
+    }
+
+    public void makeAdmin(){
+        Admin = true;
     }
 
     public void makeSuggestion(card player, card weapon, card location) {

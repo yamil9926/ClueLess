@@ -68,6 +68,7 @@ public class gameBoard {
 	card[] players;
 
     public gameBoard(){
+		status = new ArrayList<String>();
 
         //rooms
         study = new room("Study","study");
@@ -884,4 +885,61 @@ public class gameBoard {
 		
 		return false;
 	} 
+
+	public void addPlayer(String id) throws Exception {
+		if (!isActive()) {
+			if (getNumActivePlayers() < 6) {
+				player p = getPlayer(getNumActivePlayers()+1);
+				p.setId(id);
+				p.disabled = false;
+				activePlayers++;
+				
+				String statusMessage = "New player joined game as " + p.name + " - id # " + id;
+				
+				status.add(statusMessage);
+				System.out.println(statusMessage);
+				System.out.println();
+			} else {
+				String errorMessage = "The game is full!";
+				
+				System.out.println(errorMessage);
+				System.out.println();
+				
+				throw new Exception(errorMessage);
+			}
+		} else {
+			String errorMessage = "The game already started!";
+			
+			System.out.println(errorMessage);
+			System.out.println();
+			
+			throw new Exception(errorMessage);
+		}
+	}
+
+	
+
+	public player getPlayer(String id) {
+		for (player p : playerList) {
+			if (p.getId() != null && !p.getId().isEmpty() && p.getId().equals(id))
+				return p;
+		}
+		return null;
+	}
+
+	public player getPlayer(int position) {
+		switch(position){
+			case 1: return player1;
+			case 2: return player2;
+			case 3: return player3;
+			case 4: return player4;
+			case 5: return player5;
+			case 6: return player6;
+		}//end switch
+		return null;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
 }

@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<script type="text/javascript" src="popUp.js"></script>
 <html>
     <head>
         <title>Home</title>
@@ -8,8 +7,11 @@
     </head>
     <body>
 
+        <h1>Clueless Prototype</h1>
+
         <p>
-            <button class="test-btn" onClick="disable()">Help</button>
+            <button onClick="location.href='create';return false;">Create Game</button>
+            <button onClick="location.href='join';return false;">Join Game</button>
         </p>
 
     </body>
