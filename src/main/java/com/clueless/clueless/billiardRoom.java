@@ -15,7 +15,7 @@ public class billiardRoom extends location {
         adjLocations = locations;
     }
 
-   public location[] getAdjacent(){
+   public location[] getAdjacent(String plis){
         return adjLocations;
    }
 

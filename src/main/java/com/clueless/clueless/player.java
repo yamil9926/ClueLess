@@ -9,10 +9,10 @@ public class player {
     location location;
     Boolean disabled = false;
     Boolean moved = false;
-    boolean hasTurn;
-    boolean suggestionMadeHere;
+    boolean hasTurn = false;
+    boolean canSuggest;
     private boolean Admin = false;
-    String id;
+    String id = " ";
 
     card[] suggestion = new card[3];
 	card[] accusation = new card[3];
@@ -26,11 +26,19 @@ public class player {
     public void move(location newLocation) {
         if(hasTurn || moved) {
             location = newLocation;
-            suggestionMadeHere = false;
+            canSuggest = true;
         }
         else
             System.out.println("You cannot move because it is not your turn.");
         moved = false;
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    public String getCodename(){
+        return codename;
     }
 
     public void addCard(card card){
@@ -87,12 +95,12 @@ public class player {
     }
 
     public void makeSuggestion(card player, card weapon, card location) {
-        if(hasTurn && !suggestionMadeHere) {
+        if(hasTurn && canSuggest) {
             suggestion[0] = player;
             suggestion[1] = weapon;
             suggestion[2] = location;
             
-            suggestionMadeHere = true;
+            canSuggest = false;
         }
         else {
             System.out.println("You cannot make a suggestion because it is not your turn,");

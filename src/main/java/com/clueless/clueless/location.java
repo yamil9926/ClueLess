@@ -12,6 +12,14 @@ public class location {
         this.codename = codename;
     }
 
+    public String getName(){
+        return name;
+    }
+
+    public String getCodename(){
+        return codename;
+    }
+
     public void setOccupied(boolean location_occupied) {
         this.location_occupied = location_occupied;
     }

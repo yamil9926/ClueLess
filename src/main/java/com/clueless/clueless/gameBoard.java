@@ -10,7 +10,7 @@ public class gameBoard {
 	private card hallCard;
 	private card loungeCard;
 	private card libraryCard;
-	private card billardRoomCard;
+	private card billiardRoomCard;
 	private card diningRoomCard;
 	private card conservatoryCard;
 	private card ballRoomCard;
@@ -55,6 +55,12 @@ public class gameBoard {
 	private hallway hallway10;
 	private hallway hallway11;
 	private hallway hallway12;
+	private startSquare square1;
+	private startSquare square2;
+	private startSquare square3;
+	private startSquare square4;
+	private startSquare square5;
+	private startSquare square6;
     private player[] playerList;
 	private location[] locationList;
     private caseFile CaseFile;
@@ -94,6 +100,14 @@ public class gameBoard {
 		hallway10 = new hallway("Hallway Ten","hwy10");
 		hallway11 = new hallway("Hallway Eleven","hwy11");
 		hallway12 = new hallway("Hallway Twelve","hwy12");
+
+		//start squares
+		square1 = new startSquare("Miss Scarlet Square", "scarlet");
+		square2 = new startSquare("Prof. Plum Square", "plum");
+		square3 = new startSquare("Col. Mustard Square", "mustard");
+		square4 = new startSquare("Mrs. Peacock Square", "peacock");
+		square5 = new startSquare("Mr. Green Square", "green");
+		square6 = new startSquare("Mrs. White Square", "white");
 
 		//all locations
         locationList = new location[21];
@@ -142,31 +156,31 @@ public class gameBoard {
         hallway10.setAdjacent(new location[]{diningRoom, kitchen});
         hallway11.setAdjacent(new location[]{conservatory, ballroom});
         hallway12.setAdjacent(new location[]{ballroom, kitchen});
+		square1.setAdjacent(hallway2);
+		square2.setAdjacent(hallway3);
+		square3.setAdjacent(hallway5);
+		square4.setAdjacent(hallway8);
+		square5.setAdjacent(hallway11);
+		square6.setAdjacent(hallway12);
 
     	//players
-        player1 = new player("Miss Scarlet", "scarlet", hallway2);
+        player1 = new player("Miss Scarlet", "scarlet", square1);
 		player1.disabled = false;
-		hallway2.setOccupant(player1);
 		
-		player2 = new player("Prof. Plum", "plum", hallway3);
+		player2 = new player("Prof. Plum", "plum", square2);
 		player2.disabled = false;
-		hallway3.setOccupant(player2);
 		
-		player3 = new player("Col. Mustard", "mustard", hallway5);
+		player3 = new player("Col. Mustard", "mustard", square3);
 		player3.disabled = false;
-		hallway5.setOccupant(player3);
 		
-		player4 = new player("Mrs. Peacock", "peacock", hallway8);
+		player4 = new player("Mrs. Peacock", "peacock", square4);
 		player4.disabled = false;
-		hallway8.setOccupant(player4);
 		
-		player5 = new player("Mr. Green", "green", hallway11);
+		player5 = new player("Mr. Green", "green", square5);
 		player5.disabled = false;
-		hallway11.setOccupant(player5);
 		
-		player6 = new player("Mrs. White", "white", hallway12);
+		player6 = new player("Mrs. White", "white", square6);
 		player6.disabled = false;
-		hallway12.setOccupant(player6);
 		
 		playerList = new player[6];
 		playerList[0] = player1;
@@ -185,7 +199,7 @@ public class gameBoard {
 		hallCard = new card("Hall", cardType.room);
 		loungeCard = new card("Lounge", cardType.room);
 		libraryCard = new card("Library", cardType.room);
-		billardRoomCard = new card("Billard Room", cardType.room);
+		billiardRoomCard = new card("Billiard Room", cardType.room);
 		diningRoomCard = new card("Dining Room", cardType.room);
 		conservatoryCard = new card("Conservatory", cardType.room);
 		ballRoomCard = new card("Ballroom", cardType.room);
@@ -203,7 +217,7 @@ public class gameBoard {
 		mrG = new card("Mr. Green", cardType.player);
 		mrsW = new card("Mrs. White", cardType.player);
 
-        rooms = new card[]{studyCard, hallCard, loungeCard, libraryCard, billardRoomCard, diningRoomCard, conservatoryCard, ballRoomCard, kitchenCard};
+        rooms = new card[]{studyCard, hallCard, loungeCard, libraryCard, billiardRoomCard, diningRoomCard, conservatoryCard, ballRoomCard, kitchenCard};
 		weapons = new card[]{candleStick, wrench, rope, revolver, knife, leadPipe};
 		players = new card[]{missS, profP, colM, mrsP, mrG, mrsW};
 		
@@ -252,7 +266,7 @@ public class gameBoard {
         player6.addCard(toPlayers[16]);
         player6.addCard(toPlayers[17]);
 
-		turn = 0;
+		turn = 1;
 		active = false;
 		endgame = false;
 
@@ -268,6 +282,17 @@ public class gameBoard {
 			case 6: return player6;
 		}
 		return null;
+	}
+
+	public ArrayList<player> getOtherPlayers(){
+		player current = getCurrentPlayer();
+		ArrayList<player> players = new ArrayList<player>();
+		for(player p: playerList){
+			if(p.name != current.name){
+				players.add(p);
+			}
+		}
+		return players;
 	}
 
 	public void  endTurn() {
@@ -327,6 +352,15 @@ public class gameBoard {
 		
 		active = false;
 		endgame = true;
+	}
+
+	public Boolean startGame(){
+		if(activePlayers > 2){
+			active = true;
+			beginTurn();
+			return true;
+		}
+		return false;	
 	}
 
 	public ArrayList<String> getMoveOptions() {
@@ -586,24 +620,18 @@ public class gameBoard {
 		String statusMessage = "";
 		
 		if(player.hasTurn){
-			if (player.suggestionMadeHere) {
+			if (!player.canSuggest) {
 				errorMessage = "You cannot make a suggestion because you have already made a suggestion in this location.";
 				
 				System.out.println(errorMessage);
 				System.out.println();
 				
 				throw new Exception(errorMessage);
-			}//end if
+			}
 			else {
-				if(suggestPlayer<0){
-					suggestPlayer *= -1;
-				}
-				card playerS = players[suggestPlayer%6];
+				card playerS = players[suggestPlayer - 1];
 
-				if(suggestWeapon<0){
-					suggestWeapon *= -1;
-				}	
-				card playerW = weapons[suggestWeapon%6];
+				card playerW = weapons[suggestWeapon - 1];
 				
 				
 				location place = player.getLocation();
@@ -618,7 +646,7 @@ public class gameBoard {
 				else if (place == library)
 					playerR = libraryCard;
 				else if (place == billiardRoom)
-					playerR = billardRoomCard;
+					playerR = billiardRoomCard;
 				else if (place == diningRoom)
 					playerR = diningRoomCard;
 				else if (place == conservatory)
@@ -649,79 +677,14 @@ public class gameBoard {
 					location fromHere;
 					location toHere = player.getLocation();
 					
-					if (suggestPlayer == 1){
-						fromHere = player1.getLocation();
-						fromHere.removeOccupant(player1);
-
-						toHere.setOccupant(player1);
-						player1.moved = true;
-						player1.move(toHere);
-						statusMessage = player1.name + " has been moved from " + fromHere.name + " to " + toHere.name;
-						System.out.println(statusMessage);
-						moveHistory.add(statusMessage);
-						
-					}
-					else if (suggestPlayer == 2){
-						fromHere = player2.getLocation();
-						fromHere.removeOccupant(player2);
-	
-						toHere.setOccupant(player2);
-						player2.moved = true;
-						player2.move(toHere);
-						statusMessage = player2.name + " has been moved from " + fromHere.name + " to " + toHere.name;
-						System.out.println(statusMessage);
-						moveHistory.add(statusMessage);
-						
-					}
-					else if (suggestPlayer == 3){
-						fromHere = player3.getLocation();
-						fromHere.removeOccupant(player3);
-	
-						toHere.setOccupant(player3);
-						player3.moved = true;
-						player3.move(toHere);
-						statusMessage = player3.name + " has been moved from " + fromHere.name + " to " + toHere.name;
-						System.out.println(statusMessage);
-						moveHistory.add(statusMessage);
-						
-					}
-					else if ((suggestPlayer == 4) && (player4.name != "Placeholder")){
-						fromHere = player4.getLocation();
-						fromHere.removeOccupant(player4);
-	
-						toHere.setOccupant(player4);
-						player4.moved = true;
-						player4.move(toHere);
-						statusMessage = player4.name + " has been moved from " + fromHere.name + " to " + toHere.name;
-						System.out.println(statusMessage);
-						moveHistory.add(statusMessage);
-						
-					}
-					else if ((suggestPlayer == 5) && (player5.name != "Placeholder")){
-						fromHere = player5.getLocation();
-						fromHere.removeOccupant(player5);
-
-						toHere.setOccupant(player5);
-						player5.moved = true;
-						player5.move(toHere);
-						statusMessage = player5.name + " has been moved from " + fromHere.name + " to " + toHere.name;
-						System.out.println(statusMessage);
-						moveHistory.add(statusMessage);
-						
-					}
-					else if ((suggestPlayer == 6) && (player6.name != "Placeholder")){
-						fromHere = player6.getLocation();
-						fromHere.removeOccupant(player6);
-
-						toHere.setOccupant(player6);
-						player6.moved = true;
-						player6.move(toHere);
-						statusMessage = player6.name + " has been moved from " + fromHere.name + " to " + toHere.name;
-						System.out.println(statusMessage);
-						moveHistory.add(statusMessage);
-						
-					} 				
+					player culprit = getPlayer(suggestPlayer);
 					
+					fromHere = culprit.getLocation();
+					fromHere.removeOccupant(culprit);
+					toHere.setOccupant(culprit);
+					culprit.setLocation(toHere);
+					culprit.canSuggest = true;
+					//UP TO HERE IS GOOD
 					for (player p : playerList) { // verify ignoring og player
 						card[] c = p.proveOrDisproveSuggestion(player.suggestion);
 						for (int i = 0; i < 3; i++) {
@@ -750,40 +713,16 @@ public class gameBoard {
 		}
 	}	
 
-	public boolean accuse(int suggestPlayer, int suggestWeapon, int place) throws Exception { //only open case file
+	public boolean accuse(int suggestPlayer, int suggestWeapon, int place) { //only open case file
 		player player = getCurrentPlayer();
 		String statusMessage = "";
 		
 		if(player.hasTurn){
-			if(suggestPlayer<0){
-				suggestPlayer *= -1;
-			}
-			card playerS = players[suggestPlayer%6];
-
-			if(suggestWeapon<0){
-				suggestWeapon *= -1;
-			}	
-			card playerW = weapons[suggestWeapon%6];
+			card playerS = players[suggestPlayer - 1];
+	
+			card playerW = weapons[suggestWeapon - 1];
 			
-			card playerR;
-			if (place == 1)
-				playerR = studyCard;
-			else if (place == 2)
-				playerR = hallCard;
-			else if (place == 3)
-				playerR = loungeCard;
-			else if (place == 4)
-				playerR = libraryCard;
-			else if (place == 5)
-				playerR = billardRoomCard;
-			else if (place == 6)
-				playerR = diningRoomCard;
-			else if (place == 7)
-				playerR = conservatoryCard;
-			else if (place == 8)
-				playerR = ballRoomCard;
-			else
-				playerR = kitchenCard;
+			card playerR = rooms[place - 1];
 			
 			player.makeAccusation(playerS, playerW, playerR);
 			
@@ -845,20 +784,22 @@ public class gameBoard {
 			ar[i] = a;
 		}
 	}
-	private location[] getAdjacent(location location){
+	public location[] getAdjacent(location location){
 		location[] adj = new location[]{null, null, null, null};
 		location[] temp;
 		if(location instanceof room){
-			temp = ((room) location).getAdjacent();
+			temp = ((room) location).getAdjacent("");
 			adj[0] = temp[0];
 			adj[1] = temp[1];
 			adj[2] = temp[2];
 		}else if(location instanceof billiardRoom){
-			adj = ((billiardRoom) location).getAdjacent();
+			adj = ((billiardRoom) location).getAdjacent("");
 		}else if(location instanceof hallway){
-			temp = ((hallway) location).getAdjacent();
+			temp = ((hallway) location).getAdjacent("");
 			adj[0] = temp[0];
 			adj[1] = temp[1];
+		}else if(location instanceof startSquare){
+			adj[0] = ((startSquare) location).getAdjacent("");
 		}
 
 		return adj;
@@ -880,13 +821,13 @@ public class gameBoard {
 	public boolean canSuggest() {
 		player player = getCurrentPlayer();
 		
-		if (inRoom() && !player.suggestionMadeHere)
+		if (inRoom() && player.canSuggest)
 			return true;
 		
 		return false;
 	} 
 
-	public void addPlayer(String id) throws Exception {
+	public Boolean addPlayer(String id) {
 		if (!isActive()) {
 			if (getNumActivePlayers() < 6) {
 				player p = getPlayer(getNumActivePlayers()+1);
@@ -899,21 +840,12 @@ public class gameBoard {
 				status.add(statusMessage);
 				System.out.println(statusMessage);
 				System.out.println();
+				return true;
 			} else {
-				String errorMessage = "The game is full!";
-				
-				System.out.println(errorMessage);
-				System.out.println();
-				
-				throw new Exception(errorMessage);
+				return false;
 			}
 		} else {
-			String errorMessage = "The game already started!";
-			
-			System.out.println(errorMessage);
-			System.out.println();
-			
-			throw new Exception(errorMessage);
+			return false;
 		}
 	}
 
@@ -939,7 +871,34 @@ public class gameBoard {
 		return null;
 	}
 
+	public player getPlayerName(String name){
+		for(player p: playerList){
+			if (p.name == name || p.codename == name){
+				return p;
+			}
+		}
+		return null;
+	}
+
+	public location getLocationName(String name){
+		for(location l: locationList){
+			if (l.name == name || l.codename == name){
+				return l;
+			}
+		}
+		return null;
+	}
+
 	public boolean isActive() {
 		return active;
+	}
+
+	public Boolean isRoom(location l){
+		for(card c: rooms){
+			if(c.name == l.name){
+				return true;
+			}
+		}
+		return false;
 	}
 }
