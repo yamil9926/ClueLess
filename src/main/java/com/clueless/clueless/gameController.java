@@ -148,6 +148,16 @@ public class gameController {
             return reply; 
         }
         //MISSING STUFF
+        String[] result = main.getGameBoard().suggest(culprit, weapon);
+        if(result[0] != ""){ //was disproven
+            reply.put("message", "fail");
+            reply.put("player", result[0]);
+            reply.put("card", result[1]);
+        }else{// was not disproven
+            reply.put("message", "success");
+            reply.put("player", "none");
+            reply.put("card", "none");
+        }
     
         return reply;
 

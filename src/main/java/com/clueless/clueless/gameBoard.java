@@ -614,7 +614,8 @@ public class gameBoard {
 		return null;
 	}
 
-	public void suggest(int suggestPlayer, int suggestWeapon) throws Exception {
+	public String[] suggest(int suggestPlayer, int suggestWeapon) {
+		String[] result = new String[]{"",""};
 		player player = getCurrentPlayer();
 		String errorMessage = "";
 		String statusMessage = "";
@@ -626,7 +627,7 @@ public class gameBoard {
 				System.out.println(errorMessage);
 				System.out.println();
 				
-				throw new Exception(errorMessage);
+				return result;
 			}
 			else {
 				card playerS = players[suggestPlayer - 1];
@@ -661,7 +662,7 @@ public class gameBoard {
 					System.out.println(errorMessage);
 					System.out.println();
 					
-					throw new Exception(errorMessage);
+					return result;
 				}
 				
 				if(inRoom()){
@@ -695,9 +696,10 @@ public class gameBoard {
 								System.out.println(statusMessage);
 								System.out.println();
 								
-								endTurn();
+								result[0] = p.name;
+								result[1] = c[i].getName();
 								
-								return;
+								return result;
 							}
 						}
 					}
@@ -711,6 +713,7 @@ public class gameBoard {
 				}
 			}
 		}
+		return result;
 	}	
 
 	public boolean accuse(int suggestPlayer, int suggestWeapon, int place) { //only open case file
