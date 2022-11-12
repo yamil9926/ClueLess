@@ -6,33 +6,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 public class gameController {
     // server subclass to interface between client subsystem and the rest of the
-    // backend
-    private String errorMessage = ""; 
+    // backend 
     private ArrayList<game> gameList = new ArrayList<game>();
     private game main = new game("","");
     private ArrayList<String> chat = new ArrayList<String>();
 
-    @RequestMapping(value = "/index") //for testing
-    public ModelAndView home(ModelMap model) {
-        return new ModelAndView("index");
-    }
-
-    @RequestMapping("/game")  
+    @RequestMapping(value = "/game", method = RequestMethod.GET)  
     public ArrayList<gameBoard> json(){
         ArrayList<gameBoard> board = new ArrayList<gameBoard>();
         board.add(main.getGameBoard());
@@ -63,7 +52,7 @@ public class gameController {
         return chat;
     }
 
-    @RequestMapping("/start")
+    @RequestMapping(value = "/start", method = RequestMethod.GET)
     public Map<String,String> start(){
         Map<String,String> reply = new HashMap<String,String>();
         if(main.getGameBoard().startGame()){
@@ -75,13 +64,13 @@ public class gameController {
         // Starts the game on turn 1 if there are enough players
     }
 
-    @RequestMapping("/endturn")
+    @RequestMapping(value = "/endturn", method = RequestMethod.GET)
     public void endTurn(){
         main.getGameBoard().endTurn();
         // Moves game to next turn
     }
 
-    @RequestMapping("/move") //send POST with name/codename of player and location
+    @RequestMapping(value = "/move", method = RequestMethod.POST) //send POST with name/codename of player and location
     public Map<String, String> move(@RequestParam("user") String user, @RequestParam("location") String location){
         Map<String,String> reply = new HashMap<String,String>();
         if(!main.getGameBoard().isActive()){ // if game is not active
@@ -125,7 +114,7 @@ public class gameController {
         // Succeeds if new location is adjacent to current location and has space
     }
 
-    @RequestMapping("/accuse")
+    @RequestMapping(value = "/accuse", method = RequestMethod.POST)
     public Map<String,String> accuse(@RequestParam("culprit") int culprit, @RequestParam("weapon") int weapon, @RequestParam("location") int location){
         Map<String,String> reply = new HashMap<String,String>();
         if(main.getGameBoard().accuse(culprit, weapon, location)){
@@ -138,7 +127,7 @@ public class gameController {
         return reply;
     }
 
-    @RequestMapping("/suggest")
+    @RequestMapping(value = "/suggest", method = RequestMethod.POST)
     public Map<String,String> suggest(@RequestParam("culprit") int culprit, @RequestParam("weapon") int weapon){
         Map<String,String> reply = new HashMap<String,String>();
         player current = main.getGameBoard().getCurrentPlayer();
@@ -163,10 +152,10 @@ public class gameController {
 
     }
 
-    @RequestMapping("/join")
-    public Map<String,String> joinGame(HttpSession session){
+    @RequestMapping(value = "/join", method = RequestMethod.POST)
+    public Map<String,String> joinGame(@RequestParam("player") String id){
         Map<String,String> reply = new HashMap<String,String>();
-        if(main.getGameBoard().addPlayer(session.getId())){
+        if(main.getGameBoard().addPlayer(id)){
             reply.put("message", "success");
             reply.put("reason", "Player joined");
             return reply;
@@ -175,146 +164,6 @@ public class gameController {
         reply.put("reason", "Player unable to join");
         return reply;
     }
-
-    @RequestMapping(value = "/show") //for testing
-    public ModelAndView show() {
-
-        var mav = new ModelAndView();
-
-        var now = LocalDateTime.now();
-        var formatter = DateTimeFormatter.ISO_DATE_TIME;
-        var dateTimeFormatted = formatter.format(now);
-
-        mav.addObject("now", dateTimeFormatted);
-        mav.setViewName("show");
-
-        return mav;
-    }
-
-    @RequestMapping("/myid") //test
-    public String myId(HttpSession session){
-        return "My id is" + session.getId();
-    }
-
-    @RequestMapping("/")
-    public ModelAndView home(){
-        return new ModelAndView("home");
-    }
-
-    @RequestMapping("/home")
-    public ModelAndView goHome(){
-        return new ModelAndView("redirect:/");
-    }
-
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public ModelAndView getcreate(HttpSession session){
-        return new ModelAndView("create");
-    }
-
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ModelAndView create(@RequestParam(value = "type", required = false) String type,
-                        @RequestParam(value = "name", required = false) String name,
-                        @RequestParam(value = "password", required = false) String password,
-                        HttpSession session){
-        if (type != null && !type.isEmpty() && name != null && !name.isEmpty() && password != null) {
-			if (type.equals("private") && password.isEmpty()) {
-				errorMessage = "You must enter a password for a private game!";
-			} else {
-				if (getGameByName(name) != null) {
-					errorMessage = "This game name already exists!";
-				} else {
-					game game = new game(name, password);
-					
-					try {
-						session.removeAttribute("s");
-						session.removeAttribute("r");
-						session.removeAttribute("w");
-						session.removeAttribute("notes");
-
-						game.getGameBoard().addPlayer(session.getId());
-						game.getGameBoard().getPlayer(session.getId()).makeAdmin();
-						session.setAttribute("gameId", game.getId());
-						gameList.add(game);
-						
-                        return new ModelAndView("redirect:/gamescreen"); //for testing
-					} catch (Exception e) {
-						errorMessage = e.getMessage();
-					}
-				}
-			}
-		} else if (type != null && !type.isEmpty() && name != null && name.isEmpty()) {
-			errorMessage = "Please enter a name!";
-		}
-
-        System.out.println(errorMessage);
-		
-		ModelAndView mv = new ModelAndView("create");
-		mv.addObject("type", type);
-		mv.addObject("name", name);
-		mv.addObject("password", password);
-		mv.addObject("errorMessage", errorMessage);
-		errorMessage = "";
-		return mv;
-    }
-
-    @RequestMapping("/joinGame")
-    public ModelAndView getjoin(){
-        return new ModelAndView("join");
-    }
-
-    @RequestMapping(value = "/joinGame", method = RequestMethod.POST)
-    public ModelAndView join(	@RequestParam(value = "type", required = false) String type,
-                                @RequestParam(value = "name", required = false) String name,
-                                @RequestParam(value = "password", required = false) String password,
-                                HttpSession session) {
-
-        if (type != null && !type.isEmpty() && name != null && !name.isEmpty() && password != null) {
-            if (type.equals("private") && password.isEmpty()) {
-                errorMessage = "You must enter a password for a private game!";
-            } else {
-                game game = getGameByName(name);
-                if (game != null) {
-                    if (game.login(name, password)) {
-                        try {
-                            if (game.getGameBoard().getPlayer(session.getId()) == null) {
-                                session.removeAttribute("s");
-                                session.removeAttribute("r");
-                                session.removeAttribute("w");
-                                session.removeAttribute("notes");
-                                
-                                game.getGameBoard().addPlayer(session.getId());
-                                session.setAttribute("gameId", game.getId());
-                            }
-                            return new ModelAndView("redirect:/gamescreen");
-                        } catch (Exception e) {
-                            errorMessage = "Error: " + e.getMessage();
-                        }
-                    } else
-                        errorMessage = "Name and/or password is incorrect!";
-                } else {
-                    errorMessage = "Game does not exist yet!";
-                }
-            }
-        } else if (type != null && !type.isEmpty() && name != null && name.isEmpty()) {
-            errorMessage = "Please enter a name!";
-        }
-
-        System.out.println(errorMessage);
-
-        ModelAndView mv = new ModelAndView("join");
-        mv.addObject("type", type);
-        mv.addObject("name", name);
-        mv.addObject("password", password);		
-        mv.addObject("errorMessage", errorMessage);
-        errorMessage = "";
-        return mv;
-    }
-
-    @RequestMapping("/gamescreen")
-    public String gamescreen(HttpSession session){
-        return "gamescreen";
-    }
-
 
     public game getGameByName(String name) {
 		if (gameList != null) {
