@@ -41,6 +41,13 @@ public class gameController {
          */
     }
 
+    @RequestMapping(value = "/details", method = RequestMethod.GET)  
+    public Map<String,ArrayList<player>> details(){
+        Map<String,ArrayList<player>> reply = new HashMap<String,ArrayList<player>>();
+        reply.put("players", main.getGameBoard().getActivePlayers());
+        return reply;
+    }
+
     @RequestMapping(value = "/chat", method = RequestMethod.POST)
     public ArrayList<String> chat(@RequestParam("message") String message){
         chat.add(message);

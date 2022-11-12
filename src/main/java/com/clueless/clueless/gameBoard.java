@@ -2,6 +2,8 @@ package com.clueless.clueless;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.HashMap;
+import java.util.Map;
 
 public class gameBoard {
 	private boolean active;
@@ -165,22 +167,22 @@ public class gameBoard {
 
     	//players
         player1 = new player("Miss Scarlet", "scarlet", square1);
-		player1.disabled = false;
+		player1.disabled = true;
 		
 		player2 = new player("Prof. Plum", "plum", square2);
-		player2.disabled = false;
+		player2.disabled = true;
 		
 		player3 = new player("Col. Mustard", "mustard", square3);
-		player3.disabled = false;
+		player3.disabled = true;
 		
 		player4 = new player("Mrs. Peacock", "peacock", square4);
-		player4.disabled = false;
+		player4.disabled = true;
 		
 		player5 = new player("Mr. Green", "green", square5);
-		player5.disabled = false;
+		player5.disabled = true;
 		
 		player6 = new player("Mrs. White", "white", square6);
-		player6.disabled = false;
+		player6.disabled = true;
 		
 		playerList = new player[6];
 		playerList[0] = player1;
@@ -837,6 +839,9 @@ public class gameBoard {
 				p.setId(id);
 				p.disabled = false;
 				activePlayers++;
+				if(getNumActivePlayers() == 1){
+					p.makeAdmin();
+				}
 				
 				String statusMessage = "New player joined game as " + p.name + " - id # " + id;
 				
@@ -903,5 +908,15 @@ public class gameBoard {
 			}
 		}
 		return false;
+	}
+
+	public ArrayList<player> getActivePlayers(){
+		ArrayList<player> players = new ArrayList<>();
+		for(player p :playerList){
+			if(!p.isDisabled()){
+				players.add(p);
+			}
+		}
+        return players;
 	}
 }
