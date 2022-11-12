@@ -679,7 +679,7 @@ public class gameBoard {
 					location fromHere;
 					location toHere = player.getLocation();
 					
-					player culprit = getPlayer(suggestPlayer);
+					player culprit = getPlayerName(suggestPlayer);
 					
 					fromHere = culprit.getLocation();
 					fromHere.removeOccupant(culprit);
@@ -880,7 +880,7 @@ public class gameBoard {
 
 	public player getPlayerName(String name){
 		for(player p: playerList){
-			if (p.name == name || p.codename == name || p.id == name){
+			if (p.getName().equals(name) || p.getCodename().equals(name) || p.getId().equals(name)){
 				return p;
 			}
 		}
@@ -889,7 +889,7 @@ public class gameBoard {
 
 	public location getLocationName(String name){
 		for(location l: locationList){
-			if (l.name == name || l.codename == name){
+			if (l.name.equals(name) || l.codename.equals(name)){
 				return l;
 			}
 		}
@@ -921,17 +921,17 @@ public class gameBoard {
 
 	public card getCardName(String name){
 		for(card c: rooms){
-			if (c.getName() == name){
+			if (c.getName().equals(name)){
 				return c;
 			}
 		}
 		for(card c: players){
-			if (c.getName() == name){
+			if (c.getName().equals(name)){
 				return c;
 			}
 		}
 		for(card c: weapons){
-			if (c.getName() == name){
+			if (c.getName().equals(name)){
 				return c;
 			}
 		}

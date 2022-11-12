@@ -16,14 +16,16 @@ public class hallway extends location{
         return adjLocations;
    }
 
+   @Override
    public Boolean setOccupant(player occupant){ //True if succesfull, false if fail
-        if (occupants != null){
+        if (occupants == null){
             occupants = occupant;
             return true;
         }
         return false;
    }
 
+    @Override
    public Boolean removeOccupant(player occupant){ //True if removed, false if hallway empty or player not in hallway
         if(occupants != occupant || occupants == null){
             return false;

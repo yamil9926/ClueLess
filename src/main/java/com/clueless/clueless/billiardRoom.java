@@ -19,10 +19,12 @@ public class billiardRoom extends location {
         return adjLocations;
    }
 
+   @Override
    public Boolean setOccupant(player occupant){ //True if succesfull, false if fail
         return occupants.add(occupant);
    }
 
+   @Override
    public Boolean removeOccupant(player occupant){ //True if removed, false if occupant not in list
         return occupants.remove(occupant);
    }

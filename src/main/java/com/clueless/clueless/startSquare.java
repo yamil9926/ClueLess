@@ -17,6 +17,7 @@ public class startSquare extends location {
         return adjacent;
     }
 
+    @Override
     public Boolean setOccupant(player occupant){ //True if succesfull, false if fail
         if (this.occupant != null){
             this.occupant = occupant;
@@ -25,6 +26,7 @@ public class startSquare extends location {
         return false;
    }
 
+   @Override
    public Boolean removeOccupant(player occupant){ //True if removed, false if hallway empty or player not in hallway
         if(this.occupant != occupant || this.occupant == null){
             return false;
