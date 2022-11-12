@@ -94,6 +94,10 @@ public class player {
         Admin = true;
     }
 
+    public Boolean isAdmin(){
+        return Admin;
+    }
+
     public void makeSuggestion(card player, card weapon, card location) {
         if(hasTurn && canSuggest) {
             suggestion[0] = player;
