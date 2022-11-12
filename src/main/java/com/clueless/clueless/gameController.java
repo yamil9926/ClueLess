@@ -124,7 +124,7 @@ public class gameController {
     }
 
     @RequestMapping(value = "/accuse", method = RequestMethod.POST)
-    public Map<String,String> accuse(@RequestParam("culprit") int culprit, @RequestParam("weapon") int weapon, @RequestParam("location") int location){
+    public Map<String,String> accuse(@RequestParam("culprit") String culprit, @RequestParam("weapon") String weapon, @RequestParam("location") String location){
         Map<String,String> reply = new HashMap<String,String>();
         if(main.getGameBoard().accuse(culprit, weapon, location)){
             reply.put("message", "game over");
@@ -137,7 +137,7 @@ public class gameController {
     }
 
     @RequestMapping(value = "/suggest", method = RequestMethod.POST)
-    public Map<String,String> suggest(@RequestParam("culprit") int culprit, @RequestParam("weapon") int weapon){
+    public Map<String,String> suggest(@RequestParam("culprit") String culprit, @RequestParam("weapon") String weapon){
         Map<String,String> reply = new HashMap<String,String>();
         player current = main.getGameBoard().getCurrentPlayer();
         if(!current.canSuggest){

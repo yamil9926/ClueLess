@@ -616,7 +616,7 @@ public class gameBoard {
 		return null;
 	}
 
-	public String[] suggest(int suggestPlayer, int suggestWeapon) {
+	public String[] suggest(String suggestPlayer, String suggestWeapon) {
 		String[] result = new String[]{"",""};
 		player player = getCurrentPlayer();
 		String errorMessage = "";
@@ -632,10 +632,9 @@ public class gameBoard {
 				return result;
 			}
 			else {
-				card playerS = players[suggestPlayer - 1];
+				card playerS = getCardName(suggestPlayer);
 
-				card playerW = weapons[suggestWeapon - 1];
-				
+				card playerW = getCardName(suggestWeapon);
 				
 				location place = player.getLocation();
 				card playerR;
@@ -718,16 +717,16 @@ public class gameBoard {
 		return result;
 	}	
 
-	public boolean accuse(int suggestPlayer, int suggestWeapon, int place) { //only open case file
+	public boolean accuse(String suggestPlayer, String suggestWeapon, String place) { //only open case file
 		player player = getCurrentPlayer();
 		String statusMessage = "";
 		
 		if(player.hasTurn){
-			card playerS = players[suggestPlayer - 1];
+			card playerS = getCardName(suggestPlayer);
 	
-			card playerW = weapons[suggestWeapon - 1];
+			card playerW = getCardName(suggestWeapon);
 			
-			card playerR = rooms[place - 1];
+			card playerR = getCardName(place);
 			
 			player.makeAccusation(playerS, playerW, playerR);
 			
@@ -881,7 +880,7 @@ public class gameBoard {
 
 	public player getPlayerName(String name){
 		for(player p: playerList){
-			if (p.name == name || p.codename == name){
+			if (p.name == name || p.codename == name || p.id == name){
 				return p;
 			}
 		}
@@ -918,5 +917,24 @@ public class gameBoard {
 			}
 		}
         return players;
+	}
+
+	public card getCardName(String name){
+		for(card c: rooms){
+			if (c.getName() == name){
+				return c;
+			}
+		}
+		for(card c: players){
+			if (c.getName() == name){
+				return c;
+			}
+		}
+		for(card c: weapons){
+			if (c.getName() == name){
+				return c;
+			}
+		}
+		return null;
 	}
 }
