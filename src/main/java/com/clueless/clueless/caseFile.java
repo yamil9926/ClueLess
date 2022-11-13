@@ -1,4 +1,4 @@
-package com.clueless_game.clueless;
+package com.clueless.clueless;
 
 public class caseFile {
     card player, weapon, room;
