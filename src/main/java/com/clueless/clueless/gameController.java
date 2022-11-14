@@ -186,6 +186,13 @@ public class gameController {
         return reply;
     }
 
+    @RequestMapping(value = "/casefile", method = RequestMethod.GET)  
+    public Map<String,card[]> casefile(){
+        Map<String,card[]> reply = new HashMap<String,card[]>();
+        reply.put("cards", main.getGameBoard().caseFile());
+        return reply;
+    }
+
     public game getGameByName(String name) {
 		if (gameList != null) {
 			for (game g : gameList) {
@@ -196,6 +203,4 @@ public class gameController {
 		}
 		return null;
 	}
-
-
 }

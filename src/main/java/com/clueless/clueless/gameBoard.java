@@ -937,4 +937,8 @@ public class gameBoard {
 		}
 		return null;
 	}
+
+	public card[] caseFile(){
+		return CaseFile.reveal();
+	}
 }
