@@ -50,6 +50,14 @@ public class gameController {
         return reply;
     }
 
+    @RequestMapping(value = "/reset", method = RequestMethod.GET)  
+    public Map<String,String> reset(){
+        Map<String,String> reply = new HashMap<String,String>();
+        reply.put("message","success");
+        main = new game("", "");
+        return reply;
+    }
+
     @RequestMapping(value = "/chat", method = RequestMethod.POST)
     public ArrayList<String> chat(@RequestParam("message") String message){
         chat.add(message);
@@ -74,8 +82,11 @@ public class gameController {
     }
 
     @RequestMapping(value = "/endturn", method = RequestMethod.GET)
-    public void endTurn(){
+    public Map<String,String> endTurn(){
         main.getGameBoard().endTurn();
+        Map<String,String> reply = new HashMap<String,String>();
+        reply.put("message","success");
+        return reply;
         // Moves game to next turn
     }
 
@@ -147,6 +158,7 @@ public class gameController {
         }
         //MISSING STUFF
         String[] result = main.getGameBoard().suggest(culprit, weapon);
+        current.canSuggest = false;
         if(result[0] != ""){ //was disproven
             reply.put("message", "fail");
             reply.put("player", result[0]);
