@@ -76,6 +76,7 @@ public class player {
     public void endTurn() {
         hasTurn = false;
         moved = false;
+        canSuggest = false;
     }
 
     public void disable(){

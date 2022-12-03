@@ -72,7 +72,7 @@ public class gameController {
     @RequestMapping(value = "/start", method = RequestMethod.GET)
     public Map<String,String> start(){
         Map<String,String> reply = new HashMap<String,String>();
-        if(main.getGameBoard().startGame()){
+        if(main.getGameBoard().startGame(chat)){
             reply.put("message","success");
             return reply;
         }
@@ -83,8 +83,18 @@ public class gameController {
 
     @RequestMapping(value = "/endturn", method = RequestMethod.GET)
     public Map<String,String> endTurn(){
-        main.getGameBoard().endTurn();
         Map<String,String> reply = new HashMap<String,String>();
+        player player = main.getGameBoard().getCurrentPlayer();
+        if(!player.moved() && player.getLocation().getCodename().startsWith("hwy")){
+            reply.put("message", "fail");
+            reply.put("reason","Player has to move from hallway");
+            return reply;
+        }else if(player.moved() && player.canSuggest){
+            reply.put("message", "fail");
+            reply.put("reason","Player has to make a suggestion");
+            return reply;
+        }
+        main.getGameBoard().endTurn(chat);
         reply.put("message","success");
         return reply;
         // Moves game to next turn
@@ -116,9 +126,12 @@ public class gameController {
                         p.setMoved(true);
                         if(main.getGameBoard().isRoom(l)){ //if entered a room, can suggest
                             p.canSuggest = true;
+                        }else{
+                            p.canSuggest = false;
                         }
                         reply.put("message", "success");
                         reply.put("reason","player moved"); 
+                        chat.add(p.name + " has moved from " + current.name + " to " + l.name);
                         return reply;
                     }
                     reply.put("message", "fail");
@@ -137,7 +150,7 @@ public class gameController {
     @RequestMapping(value = "/accuse", method = RequestMethod.POST)
     public Map<String,String> accuse(@RequestParam("culprit") String culprit, @RequestParam("weapon") String weapon, @RequestParam("location") String location){
         Map<String,String> reply = new HashMap<String,String>();
-        if(main.getGameBoard().accuse(culprit, weapon, location)){
+        if(main.getGameBoard().accuse(culprit, weapon, location, chat)){
             reply.put("message", "game over");
             reply.put("reason", "Accusation was correct");
             return reply;
@@ -153,11 +166,11 @@ public class gameController {
         player current = main.getGameBoard().getCurrentPlayer();
         if(!current.canSuggest){
             reply.put("message", "fail");
-            reply.put("reason", "Suggestion already made");
+            reply.put("reason", "Cant make suggestion");
             return reply; 
         }
         //MISSING STUFF
-        String[] result = main.getGameBoard().suggest(culprit, weapon);
+        String[] result = main.getGameBoard().suggest(culprit, weapon, chat);
         current.canSuggest = false;
         if(result[0] != ""){ //was disproven
             reply.put("message", "fail");

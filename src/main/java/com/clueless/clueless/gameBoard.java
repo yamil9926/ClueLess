@@ -297,7 +297,7 @@ public class gameBoard {
 		return players;
 	}
 
-	public void  endTurn() {
+	public void  endTurn(ArrayList<String> chat) {
 		player player = getCurrentPlayer();
 		String statusMessage = "";
 		
@@ -305,7 +305,7 @@ public class gameBoard {
 		
 		statusMessage = "***End " + player.name + "'s turn***";
 		
-		status.add(statusMessage);
+		chat.add(statusMessage);
 		System.out.println(statusMessage);
 		System.out.println();
 		
@@ -315,22 +315,22 @@ public class gameBoard {
 			turn++;
 		
 		if (getNumActivePlayers() == 0)
-			endGame();
+			endGame(chat);
 		else
-			beginTurn();
+			beginTurn(chat);
 	}
 	
-	public void beginTurn() {
+	public void beginTurn(ArrayList<String> chat) {
 		player player = getCurrentPlayer();
 		String statusMessage = "";
 		
 		if(player.disabled){
 			statusMessage = "***" + player.name + " has been skipped ***";
 			
-			status.add(statusMessage);
+			chat.add(statusMessage);
 			System.out.println(statusMessage);
 			System.out.println();
-			this.endTurn();
+			this.endTurn(chat);
 		}
 		else {
 			player.hasTurn = true;
@@ -338,17 +338,17 @@ public class gameBoard {
 			
 			statusMessage = "***Begin " + player.name + "'s turn***";
 			
-			status.add(statusMessage);
+			chat.add(statusMessage);
 			System.out.println(statusMessage);
 			System.out.println();
 			
 		}
 	}
 
-	public void endGame() {
+	public void endGame(ArrayList<String> chat) {
 		String statusMessage = "***GAME OVER***";
 		
-		status.add(statusMessage);
+		chat.add(statusMessage);
 		System.out.println(statusMessage);
 		System.out.println();
 		
@@ -356,10 +356,10 @@ public class gameBoard {
 		endgame = true;
 	}
 
-	public Boolean startGame(){
+	public Boolean startGame(ArrayList<String> chat){
 		if(activePlayers > 2){
 			active = true;
-			beginTurn();
+			beginTurn(chat);
 			return true;
 		}
 		return false;	
@@ -616,7 +616,7 @@ public class gameBoard {
 		return null;
 	}
 
-	public String[] suggest(String suggestPlayer, String suggestWeapon) {
+	public String[] suggest(String suggestPlayer, String suggestWeapon, ArrayList<String> chat) {
 		String[] result = new String[]{"",""};
 		player player = getCurrentPlayer();
 		String errorMessage = "";
@@ -624,7 +624,7 @@ public class gameBoard {
 		
 		if(player.hasTurn){
 			if (!player.canSuggest) {
-				errorMessage = "You cannot make a suggestion because you have already made a suggestion in this location.";
+				errorMessage = "You cannot make a suggestion.";
 				
 				System.out.println(errorMessage);
 				System.out.println();
@@ -671,7 +671,7 @@ public class gameBoard {
 					
 					statusMessage = player.name + " has suggested: " + playerS.name + " with the " + playerW.name + " in the " + playerR.name;
 						
-					status.add(statusMessage);
+					chat.add(statusMessage);
 					System.out.println(statusMessage);
 					System.out.println();
 					
@@ -686,28 +686,36 @@ public class gameBoard {
 					toHere.setOccupant(culprit);
 					culprit.setLocation(toHere);
 					culprit.canSuggest = true;
+
+					statusMessage = suggestPlayer + " has been moved to " + playerR.name + " because of this suggestion.";
+						
+					chat.add(statusMessage);
+					System.out.println(statusMessage);
+					System.out.println();
 					//UP TO HERE IS GOOD
 					for (player p : playerList) { // verify ignoring og player
-						card[] c = p.proveOrDisproveSuggestion(player.suggestion);
-						for (int i = 0; i < 3; i++) {
-							if (c[i] != null) {
-								statusMessage = "Suggestion disproved by " + p.name + "'s " + c[i].name + " card";
-								
-								status.add(statusMessage);
-								System.out.println(statusMessage);
-								System.out.println();
-								
-								result[0] = p.name;
-								result[1] = c[i].getName();
-								
-								return result;
+						if(p.name != player.name){
+							card[] c = p.proveOrDisproveSuggestion(player.suggestion);
+							for (int i = 0; i < 3; i++) {
+								if (c[i] != null) {
+									statusMessage = "Suggestion disproved by " + p.name + "'s " + c[i].name + " card";
+									
+									chat.add(statusMessage);
+									System.out.println(statusMessage);
+									System.out.println();
+									
+									result[0] = p.name;
+									result[1] = c[i].getName();
+									
+									return result;
+								}
 							}
 						}
 					}
 					
 					statusMessage = "No player was able to disprove your suggestion";
 					
-					status.add(statusMessage);
+					chat.add(statusMessage);
 					System.out.println(statusMessage);
 					System.out.println();
 
@@ -717,7 +725,7 @@ public class gameBoard {
 		return result;
 	}	
 
-	public boolean accuse(String suggestPlayer, String suggestWeapon, String place) { //only open case file
+	public boolean accuse(String suggestPlayer, String suggestWeapon, String place, ArrayList<String> chat) { //only open case file
 		player player = getCurrentPlayer();
 		String statusMessage = "";
 		
@@ -732,7 +740,7 @@ public class gameBoard {
 			
 			statusMessage = player.name + " has accused: " + playerS.name + " with the " + playerW.name + " in the " + playerR.name;
 			
-			status.add(statusMessage);
+			chat.add(statusMessage);
 			System.out.println(statusMessage);
 			System.out.println();
 
@@ -740,31 +748,31 @@ public class gameBoard {
 			if(player.accusation[0] == finale[0] && player.accusation[1] == finale[1] && player.accusation[2] == finale[2]){
 				statusMessage = finale[0].name + " committed the murder " + " with the " + finale[1].name + " in the " + finale[2].name;
 			
-				status.add(statusMessage);
+				chat.add(statusMessage);
 				System.out.println(statusMessage);
 				System.out.println();
 				
 				statusMessage = "*** " + player.name + " wins! ***";
 				
-				status.add(statusMessage);
+				chat.add(statusMessage);
 				System.out.println(statusMessage);
 				System.out.println();
 				
 				winner = player;
-				endGame();
+				endGame(chat);
 				
 				return true;
 
 			}else{
 				statusMessage = "Accusation was not correct, " + player.name + " has been eliminated.";
 						
-				status.add(statusMessage);
+				chat.add(statusMessage);
 				System.out.println(statusMessage);
 				System.out.println();
 				
 				player.disable();
 				activePlayers--;
-				endTurn();
+				endTurn(chat);
 				
 				return false;
 			}		
