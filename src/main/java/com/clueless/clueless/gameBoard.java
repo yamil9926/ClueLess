@@ -248,26 +248,6 @@ public class gameBoard {
 		}
         shuffle(toPlayers);
 
-		//give cards to players
-        player1.addCard(toPlayers[0]);
-        player1.addCard(toPlayers[1]);
-        player1.addCard(toPlayers[2]);
-        player2.addCard(toPlayers[3]);
-        player2.addCard(toPlayers[4]);
-        player2.addCard(toPlayers[5]);
-        player3.addCard(toPlayers[6]);
-        player3.addCard(toPlayers[7]);
-        player3.addCard(toPlayers[8]);
-        player4.addCard(toPlayers[9]);
-        player4.addCard(toPlayers[10]);
-        player4.addCard(toPlayers[11]);
-        player5.addCard(toPlayers[12]);
-        player5.addCard(toPlayers[13]);
-        player5.addCard(toPlayers[14]);
-        player6.addCard(toPlayers[15]);
-        player6.addCard(toPlayers[16]);
-        player6.addCard(toPlayers[17]);
-
 		turn = 1;
 		active = false;
 		endgame = false;
@@ -358,11 +338,47 @@ public class gameBoard {
 
 	public Boolean startGame(ArrayList<String> chat){
 		if(activePlayers > 2){
+			sortPlayerCards();
 			active = true;
 			beginTurn(chat);
 			return true;
 		}
 		return false;	
+	}
+
+	private void sortPlayerCards() {
+		int max = 18/activePlayers;
+		if(activePlayers == 3 || activePlayers == 6){
+			for(int i = 0; i < activePlayers; i++){
+				for(int j = 0; j < max; j++){
+					playerList[i].addCard(toPlayers[(i*max) + j]);
+				}
+			}
+		}else if(activePlayers == 4){
+			for(int i = 0; i < 4; i++){
+				if (i<2){
+					for(int j = 0; j <= max; j++){
+						playerList[i].addCard(toPlayers[(i*(max+1)) + j]);
+					}
+				}else{
+					for(int j = 0; j < max; j++){
+						playerList[i].addCard(toPlayers[(i*max) + j]);
+					}
+				}
+			}
+		}else if(activePlayers == 5){
+			for(int i = 0; i < 5; i++){
+				if (i<3){
+					for(int j = 0; j <= max; j++){
+						playerList[i].addCard(toPlayers[(i*(max+1)) + j]);
+					}
+				}else{
+					for(int j = 0; j < max; j++){
+						playerList[i].addCard(toPlayers[(i*max) + j]);
+					}
+				}
+			}
+		}
 	}
 
 	public ArrayList<String> getMoveOptions() {
