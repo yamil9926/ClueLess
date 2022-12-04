@@ -21,7 +21,7 @@ public class gameController {
     // backend 
     private ArrayList<game> gameList = new ArrayList<game>();
     private game main = new game("","");
-    private ArrayList<String> chat = new ArrayList<String>();
+    private ArrayList<message> chat = new ArrayList<message>();
 
     @RequestMapping(value = "/game", method = RequestMethod.GET)  
     public ArrayList<gameBoard> json(){
@@ -59,13 +59,14 @@ public class gameController {
     }
 
     @RequestMapping(value = "/chat", method = RequestMethod.POST)
-    public ArrayList<String> chat(@RequestParam("message") String message){
-        chat.add(message);
+    public ArrayList<message> chat(@RequestParam("message") String message){
+        message msg = new message("system", message);
+        chat.add(msg);
         return chat;
     }
 
     @RequestMapping(value = "/chat", method = RequestMethod.GET)
-    public ArrayList<String> chat(){
+    public ArrayList<message> chat(){
         return chat;
     }
 
@@ -131,7 +132,7 @@ public class gameController {
                         }
                         reply.put("message", "success");
                         reply.put("reason","player moved"); 
-                        chat.add(p.name + " has moved from " + current.name + " to " + l.name);
+                        chat.add(new message("system",p.name + " has moved from " + current.name + " to " + l.name));
                         return reply;
                     }
                     reply.put("message", "fail");

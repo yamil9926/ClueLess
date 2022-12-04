@@ -277,15 +277,16 @@ public class gameBoard {
 		return players;
 	}
 
-	public void  endTurn(ArrayList<String> chat) {
+	public void  endTurn(ArrayList<message> chat) {
 		player player = getCurrentPlayer();
 		String statusMessage = "";
 		
 		player.endTurn();
 		
 		statusMessage = "***End " + player.name + "'s turn***";
-		
-		chat.add(statusMessage);
+		message msg = new message("system", statusMessage);
+
+		chat.add(msg);
 		System.out.println(statusMessage);
 		System.out.println();
 		
@@ -300,14 +301,14 @@ public class gameBoard {
 			beginTurn(chat);
 	}
 	
-	public void beginTurn(ArrayList<String> chat) {
+	public void beginTurn(ArrayList<message> chat) {
 		player player = getCurrentPlayer();
 		String statusMessage = "";
 		
 		if(player.disabled){
 			statusMessage = "***" + player.name + " has been skipped ***";
-			
-			chat.add(statusMessage);
+			message msg = new message("system", statusMessage);
+			chat.add(msg);
 			System.out.println(statusMessage);
 			System.out.println();
 			this.endTurn(chat);
@@ -317,18 +318,20 @@ public class gameBoard {
 			player.moved = false;
 			
 			statusMessage = "***Begin " + player.name + "'s turn***";
-			
-			chat.add(statusMessage);
+			message msg = new message("system", statusMessage);
+
+			chat.add(msg);
 			System.out.println(statusMessage);
 			System.out.println();
 			
 		}
 	}
 
-	public void endGame(ArrayList<String> chat) {
+	public void endGame(ArrayList<message> chat) {
 		String statusMessage = "***GAME OVER***";
+		message msg = new message("system", statusMessage);
 		
-		chat.add(statusMessage);
+		chat.add(msg);
 		System.out.println(statusMessage);
 		System.out.println();
 		
@@ -336,7 +339,7 @@ public class gameBoard {
 		endgame = true;
 	}
 
-	public Boolean startGame(ArrayList<String> chat){
+	public Boolean startGame(ArrayList<message> chat){
 		if(activePlayers > 2){
 			sortPlayerCards();
 			active = true;
@@ -632,7 +635,7 @@ public class gameBoard {
 		return null;
 	}
 
-	public String[] suggest(String suggestPlayer, String suggestWeapon, ArrayList<String> chat) {
+	public String[] suggest(String suggestPlayer, String suggestWeapon, ArrayList<message> chat) {
 		String[] result = new String[]{"",""};
 		player player = getCurrentPlayer();
 		String errorMessage = "";
@@ -686,8 +689,9 @@ public class gameBoard {
 					player.makeSuggestion(playerS, playerW, playerR);
 					
 					statusMessage = player.name + " has suggested: " + playerS.name + " with the " + playerW.name + " in the " + playerR.name;
+					message msg = new message("system", statusMessage);
 						
-					chat.add(statusMessage);
+					chat.add(msg);
 					System.out.println(statusMessage);
 					System.out.println();
 					
@@ -704,8 +708,9 @@ public class gameBoard {
 					culprit.canSuggest = true;
 
 					statusMessage = suggestPlayer + " has been moved to " + playerR.name + " because of this suggestion.";
+					msg = new message("system", statusMessage);
 						
-					chat.add(statusMessage);
+					chat.add(msg);
 					System.out.println(statusMessage);
 					System.out.println();
 					//UP TO HERE IS GOOD
@@ -715,8 +720,16 @@ public class gameBoard {
 							card c = p.proveOrDisproveSuggestion(player.suggestion);
 							if(c != null) {
 								statusMessage = "Suggestion disproved by " + p.name + "'s " + c.name + " card";
+								msg = new message(player.name, statusMessage);
 								
-								chat.add(statusMessage);
+								chat.add(msg);
+								System.out.println(statusMessage);
+								System.out.println();
+
+								statusMessage = "Suggestion was dirproven.";
+								msg = new message("system", statusMessage);
+								
+								chat.add(msg);
 								System.out.println(statusMessage);
 								System.out.println();
 								
@@ -729,8 +742,9 @@ public class gameBoard {
 					}
 					
 					statusMessage = "No player was able to disprove your suggestion";
+					msg = new message("system", statusMessage);
 					
-					chat.add(statusMessage);
+					chat.add(msg);
 					System.out.println(statusMessage);
 					System.out.println();
 
@@ -740,7 +754,7 @@ public class gameBoard {
 		return result;
 	}	
 
-	public boolean accuse(String suggestPlayer, String suggestWeapon, String place, ArrayList<String> chat) { //only open case file
+	public boolean accuse(String suggestPlayer, String suggestWeapon, String place, ArrayList<message> chat) { //only open case file
 		player player = getCurrentPlayer();
 		String statusMessage = "";
 		
@@ -754,22 +768,25 @@ public class gameBoard {
 			player.makeAccusation(playerS, playerW, playerR);
 			
 			statusMessage = player.name + " has accused: " + playerS.name + " with the " + playerW.name + " in the " + playerR.name;
+			message msg = new message("system", statusMessage);
 			
-			chat.add(statusMessage);
+			chat.add(msg);
 			System.out.println(statusMessage);
 			System.out.println();
 
 			card[] finale = CaseFile.reveal();
 			if(player.accusation[0] == finale[0] && player.accusation[1] == finale[1] && player.accusation[2] == finale[2]){
 				statusMessage = finale[0].name + " committed the murder " + " with the " + finale[1].name + " in the " + finale[2].name;
+				msg = new message("system", statusMessage);
 			
-				chat.add(statusMessage);
+				chat.add(msg);
 				System.out.println(statusMessage);
 				System.out.println();
 				
 				statusMessage = "*** " + player.name + " wins! ***";
+				msg = new message("system", statusMessage);
 				
-				chat.add(statusMessage);
+				chat.add(msg);
 				System.out.println(statusMessage);
 				System.out.println();
 				
@@ -780,8 +797,9 @@ public class gameBoard {
 
 			}else{
 				statusMessage = "Accusation was not correct, " + player.name + " has been eliminated.";
+				msg = new message("system", statusMessage);
 						
-				chat.add(statusMessage);
+				chat.add(msg);
 				System.out.println(statusMessage);
 				System.out.println();
 				
