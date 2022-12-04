@@ -27,11 +27,6 @@ public class game {
 	public gameBoard getGameBoard() {
 		return gameBoard;
 	}
-	public void endGame() {
-		if (gameBoard != null)
-			gameBoard.endGame();
-		gameBoard = null;
-	}
 	public String getId() {
 		return id;
 	}
