@@ -123,18 +123,17 @@ public class player {
             System.out.println("You cannot make an accusation because it is not your turn.");
     }
 
-    public card[] proveOrDisproveSuggestion(card[] attemptedSuggestion) {
-        card[] matches = new card[3];
+    public card proveOrDisproveSuggestion(card[] attemptedSuggestion) {
+        card match = null;
         for (int i = 0; i < attemptedSuggestion.length; i++) {
-            for (int n = 0; n < cards.size(); n++) {
-                if (attemptedSuggestion[i] == cards.get(n)) {
-                    matches[i] = attemptedSuggestion[i];
-                }
+            if(cards.contains(attemptedSuggestion[i])){
+                match = attemptedSuggestion[i];
+                break;
             }
         }
-        if ((matches[0] == null) && (matches[1] == null) && (matches[2] == null))
+        if (match == null)
             System.out.println(name + " cannot disprove the suggestion");
-        return matches;
+        return match;
     }
 
 }

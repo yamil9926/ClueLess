@@ -709,22 +709,21 @@ public class gameBoard {
 					System.out.println(statusMessage);
 					System.out.println();
 					//UP TO HERE IS GOOD
-					for (player p : playerList) { // verify ignoring og player
+					for (int i = 0; i < activePlayers; i++) { // verify ignoring og player
+						player p = playerList[i];
 						if(p.name != player.name){
-							card[] c = p.proveOrDisproveSuggestion(player.suggestion);
-							for (int i = 0; i < 3; i++) {
-								if (c[i] != null) {
-									statusMessage = "Suggestion disproved by " + p.name + "'s " + c[i].name + " card";
-									
-									chat.add(statusMessage);
-									System.out.println(statusMessage);
-									System.out.println();
-									
-									result[0] = p.name;
-									result[1] = c[i].getName();
-									
-									return result;
-								}
+							card c = p.proveOrDisproveSuggestion(player.suggestion);
+							if(c != null) {
+								statusMessage = "Suggestion disproved by " + p.name + "'s " + c.name + " card";
+								
+								chat.add(statusMessage);
+								System.out.println(statusMessage);
+								System.out.println();
+								
+								result[0] = p.name;
+								result[1] = c.getName();
+								
+								return result;
 							}
 						}
 					}
