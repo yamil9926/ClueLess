@@ -3,6 +3,7 @@ package com.clueless.clueless;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,14 +20,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class gameController {
     // server subclass to interface between client subsystem and the rest of the
     // backend 
-    private ArrayList<game> gameList = new ArrayList<game>();
-    private game main = new game("","");
+    private game main = new game("Room 1","");
+    private game main2 = new game("Room 2", "");
+    private game main3 = new game("Room 3", "");
+    private ArrayList<game> gameList = new ArrayList<game>(Arrays.asList(main, main2, main3));
     private ArrayList<message> chat = new ArrayList<message>();
 
     @RequestMapping(value = "/game", method = RequestMethod.GET)  
-    public ArrayList<gameBoard> json(){
+    public ArrayList<gameBoard> json(HttpSession request){
         ArrayList<gameBoard> board = new ArrayList<gameBoard>();
-        board.add(main.getGameBoard());
+        board.add(getGameByName((String)request.getAttribute("gamename")).getGameBoard());
         return board;
         //Returns the following info:
         /**
@@ -41,6 +44,11 @@ public class gameController {
          * 9. Active Players (# of real people playing)
          * 
          */
+    }
+
+    @RequestMapping(value = "/games", method = RequestMethod.GET)
+    public ArrayList<game> getGames(){
+        return gameList;
     }
 
     @RequestMapping(value = "/details", method = RequestMethod.GET)  
