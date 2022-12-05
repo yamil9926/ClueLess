@@ -10,7 +10,7 @@ public class player {
     Boolean disabled = false;
     Boolean moved = false;
     boolean hasTurn = false;
-    boolean canSuggest;
+    boolean canSuggest = false;
     private boolean Admin = false;
     String id = " ";
 
@@ -97,6 +97,10 @@ public class player {
 
     public Boolean isAdmin(){
         return Admin;
+    }
+
+    public Boolean getSuggest(){
+        return canSuggest;
     }
 
     public void makeSuggestion(card player, card weapon, card location) {
