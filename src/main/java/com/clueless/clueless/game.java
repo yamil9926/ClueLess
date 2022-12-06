@@ -1,5 +1,6 @@
 package com.clueless.clueless;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class game {
@@ -7,6 +8,7 @@ public class game {
 	private String password;
 	private String id;
 	private gameBoard gameBoard = null;
+	public ArrayList<message> chat = new ArrayList<message>();
 	
 	public game(String gameName, String gamePassword) {
 		name = gameName;

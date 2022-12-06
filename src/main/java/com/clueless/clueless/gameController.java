@@ -20,16 +20,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class gameController {
     // server subclass to interface between client subsystem and the rest of the
     // backend 
-    private game main = new game("Room 1","");
+    private game main1 = new game("Room 1","");
     private game main2 = new game("Room 2", "");
     private game main3 = new game("Room 3", "");
-    private ArrayList<game> gameList = new ArrayList<game>(Arrays.asList(main, main2, main3));
-    private ArrayList<message> chat = new ArrayList<message>();
+    private ArrayList<game> gameList = new ArrayList<game>(Arrays.asList(main1, main2, main3));
+    
 
     @RequestMapping(value = "/game", method = RequestMethod.GET)  
     public ArrayList<gameBoard> json(HttpSession request){
         ArrayList<gameBoard> board = new ArrayList<gameBoard>();
-        board.add(getGameByName((String)request.getAttribute("gamename")).getGameBoard());
+        game game = getGameByName((String)request.getAttribute("name"));
+        board.add(game.getGameBoard());
         return board;
         //Returns the following info:
         /**
@@ -52,36 +53,42 @@ public class gameController {
     }
 
     @RequestMapping(value = "/details", method = RequestMethod.GET)  
-    public Map<String,ArrayList<player>> details(){
+    public Map<String,ArrayList<player>> details(HttpSession request){
         Map<String,ArrayList<player>> reply = new HashMap<String,ArrayList<player>>();
-        reply.put("players", main.getGameBoard().getActivePlayers());
+        game game = getGameByName((String)request.getAttribute("name"));
+        reply.put("players", game.getGameBoard().getActivePlayers());
         return reply;
     }
 
     @RequestMapping(value = "/reset", method = RequestMethod.GET)  
-    public Map<String,String> reset(){
+    public Map<String,String> reset(HttpSession request){
         Map<String,String> reply = new HashMap<String,String>();
+        game game = getGameByName((String)request.getAttribute("name"));
         reply.put("message","success");
-        main = new game("", "");
+        game = new game("", "");
+        game.chat = new ArrayList<message>();
         return reply;
     }
 
     @RequestMapping(value = "/chat", method = RequestMethod.POST)
-    public ArrayList<message> chat(@RequestParam("message") String message){
+    public ArrayList<message> chat(@RequestParam("message") String message, HttpSession request){
+        game game = getGameByName((String)request.getAttribute("name"));
         message msg = new message("system", message);
-        chat.add(msg);
-        return chat;
+        game.chat.add(msg);
+        return game.chat;
     }
 
     @RequestMapping(value = "/chat", method = RequestMethod.GET)
-    public ArrayList<message> chat(){
-        return chat;
+    public ArrayList<message> chat(HttpSession request){
+        game game = getGameByName((String)request.getAttribute("name"));
+        return game.chat;
     }
 
     @RequestMapping(value = "/start", method = RequestMethod.GET)
-    public Map<String,String> start(){
+    public Map<String,String> start(HttpSession request){
         Map<String,String> reply = new HashMap<String,String>();
-        if(main.getGameBoard().startGame(chat)){
+        game game = getGameByName((String)request.getAttribute("name"));
+        if(game.getGameBoard().startGame(game.chat)){
             reply.put("message","success");
             return reply;
         }
@@ -91,9 +98,10 @@ public class gameController {
     }
 
     @RequestMapping(value = "/endturn", method = RequestMethod.GET)
-    public Map<String,String> endTurn(){
+    public Map<String,String> endTurn(HttpSession request){
         Map<String,String> reply = new HashMap<String,String>();
-        player player = main.getGameBoard().getCurrentPlayer();
+        game game = getGameByName((String)request.getAttribute("name"));
+        player player = game.getGameBoard().getCurrentPlayer();
         if(!player.moved() && player.getLocation().getCodename().startsWith("hwy")){
             reply.put("message", "fail");
             reply.put("reason","Player has to move from hallway");
@@ -103,29 +111,30 @@ public class gameController {
             reply.put("reason","Player has to make a suggestion");
             return reply;
         }
-        main.getGameBoard().endTurn(chat);
+        game.getGameBoard().endTurn(game.chat);
         reply.put("message","success");
         return reply;
         // Moves game to next turn
     }
 
     @RequestMapping(value = "/move", method = RequestMethod.POST) //send POST with name/codename of player and location
-    public Map<String, String> move(@RequestParam("user") String user, @RequestParam("location") String location){
+    public Map<String, String> move(@RequestParam("user") String user, @RequestParam("location") String location, HttpSession request){
         Map<String,String> reply = new HashMap<String,String>();
-        if(!main.getGameBoard().isActive()){ // if game is not active
+        game game = getGameByName((String)request.getAttribute("name"));
+        if(!game.getGameBoard().isActive()){ // if game is not active
             reply.put("message", "fail");
             reply.put("reason","game not active");
             return reply;
         }
-        player p = main.getGameBoard().getPlayerName(user);
+        player p = game.getGameBoard().getPlayerName(user);
         if(p.moved()){ // if player has moved already
             reply.put("message", "fail");
             reply.put("reason","player already moved");
             return reply;
         }
-        location l = main.getGameBoard().getLocationName(location);
+        location l = game.getGameBoard().getLocationName(location);
         location current = p.getLocation();
-        location[] temp = main.getGameBoard().getAdjacent(current); // finds adjacent locations, max 4
+        location[] temp = game.getGameBoard().getAdjacent(current); // finds adjacent locations, max 4
         for(int i  = 0; i < 4; i++){
             if(temp[i] != null){
                 if(temp[i].name == l.name){ // if new location is adjacent to current location
@@ -133,14 +142,14 @@ public class gameController {
                         current.removeOccupant(p);
                         p.setLocation(l);
                         p.setMoved(true);
-                        if(main.getGameBoard().isRoom(l)){ //if entered a room, can suggest
+                        if(game.getGameBoard().isRoom(l)){ //if entered a room, can suggest
                             p.canSuggest = true;
                         }else{
                             p.canSuggest = false;
                         }
                         reply.put("message", "success");
                         reply.put("reason","player moved"); 
-                        chat.add(new message("system",p.name + " has moved from " + current.name + " to " + l.name));
+                        game.chat.add(new message("system",p.name + " has moved from " + current.name + " to " + l.name));
                         return reply;
                     }
                     reply.put("message", "fail");
@@ -157,9 +166,10 @@ public class gameController {
     }
 
     @RequestMapping(value = "/accuse", method = RequestMethod.POST)
-    public Map<String,String> accuse(@RequestParam("culprit") String culprit, @RequestParam("weapon") String weapon, @RequestParam("location") String location){
+    public Map<String,String> accuse(@RequestParam("culprit") String culprit, @RequestParam("weapon") String weapon, @RequestParam("location") String location, HttpSession request){
         Map<String,String> reply = new HashMap<String,String>();
-        if(main.getGameBoard().accuse(culprit, weapon, location, chat)){
+        game game = getGameByName((String)request.getAttribute("name"));
+        if(game.getGameBoard().accuse(culprit, weapon, location, game.chat)){
             reply.put("message", "game over");
             reply.put("reason", "Accusation was correct");
             return reply;
@@ -170,16 +180,17 @@ public class gameController {
     }
 
     @RequestMapping(value = "/suggest", method = RequestMethod.POST)
-    public Map<String,String> suggest(@RequestParam("culprit") String culprit, @RequestParam("weapon") String weapon){
+    public Map<String,String> suggest(@RequestParam("culprit") String culprit, @RequestParam("weapon") String weapon, HttpSession request){
         Map<String,String> reply = new HashMap<String,String>();
-        player current = main.getGameBoard().getCurrentPlayer();
+        game game = getGameByName((String)request.getAttribute("name"));
+        player current = game.getGameBoard().getCurrentPlayer();
         if(!current.canSuggest){
             reply.put("message", "fail");
             reply.put("reason", "Cant make suggestion");
             return reply; 
         }
         //MISSING STUFF
-        String[] result = main.getGameBoard().suggest(culprit, weapon, chat);
+        String[] result = game.getGameBoard().suggest(culprit, weapon, game.chat);
         current.canSuggest = false;
         if(result[0] != ""){ //was disproven
             reply.put("message", "fail");
@@ -196,11 +207,20 @@ public class gameController {
     }
 
     @RequestMapping(value = "/join", method = RequestMethod.POST)
-    public Map<String,String> joinGame(@RequestParam("player") String id){
+    public Map<String,String> joinGame(@RequestParam("player") String id, @RequestParam("room") String room, HttpSession request){
         Map<String,String> reply = new HashMap<String,String>();
-        if(main.getGameBoard().addPlayer(id)){
+        game game;
+        if(room.equals("A")){
+            game = gameList.get(0);
+        }else if (room.equals("B")){
+            game = gameList.get(1);
+        }else{
+            game = gameList.get(2);
+        }
+        if(game.getGameBoard().addPlayer(id)){
             reply.put("message", "success");
             reply.put("reason", "Player joined");
+            request.setAttribute("name", game.getName()); 
             return reply;
         }
         reply.put("message", "fail");
@@ -209,10 +229,21 @@ public class gameController {
     }
 
     @RequestMapping(value = "/casefile", method = RequestMethod.GET)  
-    public Map<String,card[]> casefile(){
+    public Map<String,card[]> casefile(@RequestParam("game") String name){
         Map<String,card[]> reply = new HashMap<String,card[]>();
-        reply.put("cards", main.getGameBoard().caseFile());
+        game game = getGameByName(name);
+        if(game == null){
+            reply.put("Game not found", null);
+            return reply;
+        }
+        reply.put("cards", game.getGameBoard().caseFile());
         return reply;
+    }
+
+    @RequestMapping(value = "/mygame", method = RequestMethod.GET) //for testing
+    public String myGame(HttpSession request){
+        game game = getGameByName((String)request.getAttribute("name"));
+        return game.getName();
     }
 
     public game getGameByName(String name) {
