@@ -83,7 +83,7 @@ public class gameBoard {
 		hall = new room("Hall","hall");
 		lounge = new room("Lounge","lounge");
 		library = new room("Library","library");
-		billiardRoom = new billiardRoom("Billard Room","billiard");
+		billiardRoom = new billiardRoom("Billiard Room","billiard");
 		diningRoom = new room("Dining Room","dining");
 		conservatory = new room("Conservatory","conservatory");
 		ballroom = new room("Ballroom","ballroom");
