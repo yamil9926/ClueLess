@@ -55,6 +55,7 @@ public class gameController {
         Map<String,String> reply = new HashMap<String,String>();
         reply.put("message","success");
         main = new game("", "");
+        chat = new ArrayList<message>();
         return reply;
     }
 
