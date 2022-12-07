@@ -65,8 +65,7 @@ public class gameController {
         Map<String,String> reply = new HashMap<String,String>();
         game game = getGameByName(room);
         reply.put("message","success");
-        game = new game("", "");
-        game.chat = new ArrayList<message>();
+        game.reset();
         return reply;
     }
 

@@ -35,4 +35,9 @@ public class game {
 	public String getName() {
 		return name;
 	}
+
+	public void reset(){
+		gameBoard = new gameBoard();
+		chat = new ArrayList<message>();
+	}
 }
