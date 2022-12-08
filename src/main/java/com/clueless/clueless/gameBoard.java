@@ -351,6 +351,7 @@ public class gameBoard {
 
 	private void sortPlayerCards() {
 		int max = 18/activePlayers;
+		int x = 0;
 		if(activePlayers == 3 || activePlayers == 6){
 			for(int i = 0; i < activePlayers; i++){
 				for(int j = 0; j < max; j++){
@@ -361,11 +362,13 @@ public class gameBoard {
 			for(int i = 0; i < 4; i++){
 				if (i<2){
 					for(int j = 0; j <= max; j++){
-						playerList[i].addCard(toPlayers[(i*(max+1)) + j]);
+						playerList[i].addCard(toPlayers[x]);
+						x++;
 					}
 				}else{
 					for(int j = 0; j < max; j++){
-						playerList[i].addCard(toPlayers[(i*max) + j]);
+						playerList[i].addCard(toPlayers[x]);
+						x++;
 					}
 				}
 			}
@@ -373,11 +376,13 @@ public class gameBoard {
 			for(int i = 0; i < 5; i++){
 				if (i<3){
 					for(int j = 0; j <= max; j++){
-						playerList[i].addCard(toPlayers[(i*(max+1)) + j]);
+						playerList[i].addCard(toPlayers[x]);
+						x++;
 					}
 				}else{
 					for(int j = 0; j < max; j++){
-						playerList[i].addCard(toPlayers[(i*max) + j]);
+						playerList[i].addCard(toPlayers[x]);
+						x++;
 					}
 				}
 			}
@@ -726,7 +731,7 @@ public class gameBoard {
 								System.out.println(statusMessage);
 								System.out.println();
 
-								statusMessage = "Suggestion was dirproven.";
+								statusMessage = "Suggestion was disproven by " + p.name + ".";
 								msg = new message("system", statusMessage);
 								
 								chat.add(msg);
